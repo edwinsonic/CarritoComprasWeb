@@ -1,0 +1,8 @@
+com\sinflo\controlador\Controlador.class
+com\edwindiego\carritocomprasweb\resources\JakartaEE8Resource.class
+com\sinflo\modelo\Carrito.class
+com\sinflo\modelo\ProductoDAO.class
+com\sinflo\config\Conexion.class
+com\sinflo\controlador\ControladorIMG.class
+com\sinflo\modelo\Producto.class
+com\edwindiego\carritocomprasweb\JakartaRestConfiguration.class
