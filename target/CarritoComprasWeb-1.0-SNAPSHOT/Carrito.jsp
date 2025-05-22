@@ -93,8 +93,11 @@
                                         <img src="ControladorIMG?id=${car.getIdProducto()}" alt="Imagen Producto" width="100" height="100"/>
                                     </td>
                                     <td>${car.getPrecioCompra()}</td>
-                                    <td>${car.getCantidad()}</td>
-                                    <td>${car.getSubTotal()}</td>
+                                    <td>
+                                        <input type="hidden" id="idpro" value="${car.getIdProducto()}">
+                                        <input type="number" id="Cantidad" value="${car.getCantidad()}" class="form-control text-center" min="1">
+                                    </td>
+                                    <td id="subtotal_${car.getIdProducto()}">${car.getSubTotal()}</td>
                                     <td>
                                         <input type="hidden" class="idp" value="${car.getIdProducto()}">
                                         <a href="#" class="btnDelete">Eliminar</a>

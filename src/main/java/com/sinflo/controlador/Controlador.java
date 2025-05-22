@@ -65,19 +65,49 @@ public class Controlador extends HttpServlet {
                 break;
 
             case "AgregarCarrito":
+                int pos = 0;
+                cantidad = 1;
                 idp = Integer.parseInt(request.getParameter("id"));
                 p = pdao.listarId(idp);
-                item = listaCarrito.size() + 1;
-                car = new Carrito();
-                car.setItem(item);
-                car.setIdProducto(p.getId());
-                car.setNombres(p.getNombres());
-                car.setDescripcion(p.getDescripcion());
-                car.setPrecioCompra(p.getPrecio());
-                car.setCantidad(cantidad);
-                car.setSubTotal(cantidad * p.getPrecio());
-                listaCarrito.add(car);
+                if (listaCarrito.size() > 0) {
+                    for (int i = 0; i < listaCarrito.size(); i++) {
+                        if (idp == listaCarrito.get(i).getIdProducto()) {
+                            pos = i;
+                        }
+                    }
 
+                    if (idp == listaCarrito.get(pos).getIdProducto()) {
+                        cantidad = listaCarrito.get(pos).getCantidad() + cantidad;
+                        double subtotal = listaCarrito.get(pos).getPrecioCompra() * cantidad;
+                        listaCarrito.get(pos).setCantidad(cantidad);
+                        listaCarrito.get(pos).setSubTotal(subtotal);
+                    } else {
+
+                        item = item + 1;
+                        car = new Carrito();
+                        car.setItem(item);
+                        car.setIdProducto(p.getId());
+                        car.setNombres(p.getNombres());
+                        car.setDescripcion(p.getDescripcion());
+                        car.setPrecioCompra(p.getPrecio());
+                        car.setCantidad(cantidad);
+                        car.setSubTotal(cantidad * p.getPrecio());
+                        listaCarrito.add(car);
+                    }
+
+                } else {
+
+                    item = item + 1;
+                    car = new Carrito();
+                    car.setItem(item);
+                    car.setIdProducto(p.getId());
+                    car.setNombres(p.getNombres());
+                    car.setDescripcion(p.getDescripcion());
+                    car.setPrecioCompra(p.getPrecio());
+                    car.setCantidad(cantidad);
+                    car.setSubTotal(cantidad * p.getPrecio());
+                    listaCarrito.add(car);
+                }
                 session.setAttribute("listaCarrito", listaCarrito);
                 session.setAttribute("contador", listaCarrito.size());
                 request.setAttribute("productos", productos);
@@ -96,6 +126,23 @@ public class Controlador extends HttpServlet {
                 session.setAttribute("contador", listaCarrito.size());
                 response.setContentType("text/plain");
                 response.getWriter().write("eliminado");
+                break;
+
+            case "ActualizarCantidad":
+                int idpro = Integer.parseInt(request.getParameter("idp"));
+                int cant = Integer.parseInt(request.getParameter("Cantidad"));
+                double nuevoSubtotal = 0;
+
+                for (int i = 0; i < listaCarrito.size(); i++) {
+                    if (listaCarrito.get(i).getIdProducto() == idpro) {
+                        listaCarrito.get(i).setCantidad(cant);
+                        nuevoSubtotal = listaCarrito.get(i).getPrecioCompra() * cant; // ← AQUÍ se guarda
+                        listaCarrito.get(i).setSubTotal(nuevoSubtotal);
+                    }
+                }
+
+                response.setContentType("text/plain");
+                response.getWriter().write(String.valueOf(nuevoSubtotal));
                 break;
 
             case "Carrito":
