@@ -4,6 +4,7 @@ import com.sinflo.modelo.Carrito;
 import com.sinflo.modelo.Producto;
 import com.sinflo.modelo.ProductoDAO;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 import javax.servlet.ServletException;
@@ -153,6 +154,45 @@ public class Controlador extends HttpServlet {
                 request.setAttribute("Carrito", listaCarrito);
                 request.setAttribute("totalPagar", totalPagar);
                 request.getRequestDispatcher("Carrito.jsp").forward(request, response);
+                break;
+            case "DescargarResumen":
+                response.setContentType("text/plain");
+                response.setHeader("Content-Disposition", "attachment; filename=\"resumen_compra.txt\"");
+
+                List<Carrito> carritoResumen = (List<Carrito>) session.getAttribute("listaCarrito");
+                double total = 0.0;
+
+                try (PrintWriter out = response.getWriter()) {
+                    out.println("XIAOMI STORE - RESUMEN DE COMPRA");
+                    out.println("Fecha: " + java.time.LocalDateTime.now());
+                    out.println("-----------------------------------------------------");
+                    out.printf("%-20s %-10s %-10s %-10s\n", "Producto", "Cant", "Precio", "Subtotal");
+
+                    for (Carrito c : carritoResumen) {
+                        double sub = c.getCantidad() * c.getPrecioCompra();
+                        out.printf("%-20s %-10d %-10.2f %-10.2f\n", c.getNombres(), c.getCantidad(), c.getPrecioCompra(), sub);
+                        total += sub;
+                    }
+
+                    out.println("-----------------------------------------------------");
+                    out.printf("TOTAL A PAGAR: S/. %.2f\n", total);
+                    out.println("Gracias por su compra!");
+                }
+
+                break;
+            case "VerResumen":
+                List<Carrito> carritoVista = (List<Carrito>) session.getAttribute("listaCarrito");
+                double totalVista = 0.0;
+
+                for (Carrito c : carritoVista) {
+                    totalVista += c.getSubTotal();
+                }
+
+                request.setAttribute("carritoResumen", carritoVista);
+                request.setAttribute("totalResumen", totalVista);
+                request.setAttribute("fechaActual", java.time.LocalDateTime.now());
+
+                request.getRequestDispatcher("ResumenCompra.jsp").forward(request, response);
                 break;
 
             default:
